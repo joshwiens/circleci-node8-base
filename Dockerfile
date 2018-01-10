@@ -71,6 +71,10 @@ ENV NODE_VERSION 8.9.4
 
 USER root
 
+# Configure Yarn repository
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
 # Run updates and install deps
 # ...
 RUN apt-get update --fix-missing
@@ -84,10 +88,6 @@ RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 RUN mkdir -p /usr/local/nvm
 RUN chmod 775 /usr/local/nvm
 RUN chown circleci:circleci /usr/local/nvm
-
-# Install yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
 RUN apt-get install yarn
 
