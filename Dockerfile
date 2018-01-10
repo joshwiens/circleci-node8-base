@@ -67,8 +67,7 @@ USER circleci
 # Setup NVM Install Environment
 # ...
 ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_VERSION 8.2.1
-ENV NPM_VERSION=5
+ENV NODE_VERSION 8.9.4
 
 USER root
 
@@ -86,6 +85,12 @@ RUN mkdir -p /usr/local/nvm
 RUN chmod 775 /usr/local/nvm
 RUN chown circleci:circleci /usr/local/nvm
 
+# Install yarn
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+
+RUN apt-get update && sudo apt-get install yarn
+
 USER circleci
 
 # NodeJS Configuration
@@ -102,5 +107,8 @@ RUN curl https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | b
 # Set up our PATH correctly so we don't have to long-reference npm, node, &c.
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+# Install Global Node Packages
+RUN yarn global add lerna
 
 CMD [ "node" ]
